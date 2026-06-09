@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+/* ─── Tailwind v4: map CSS vars → utility classes ──────────────────────── */
+
+/* ─── Design tokens — black primary + navigation blue (shared by all pages) ─ */
+:root {
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-popover:            var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary:          var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:        var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border:             var(--border);
+  --color-input:              var(--input);
+  --color-ring:               var(--ring);
+  /* Brand accents */
+  --color-navy:               var(--navy);
+  --color-nav-blue:           var(--nav-blue);
+  /* Radius tokens */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 14px);
+  /* Font */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  --radius: 0.75rem;
+
+  /* Base: near-black (the living scene background sits behind everything) */
+  --background:          #050507;   /* near-black           */
+  --foreground:          #F7F8FA;   /* neutral white        */
+
+  /* Surfaces — neutral dark glass over black */
+  --card:                #0E0E14;   /* surface              */
+  --card-foreground:     #F7F8FA;
+  --popover:             #101018;
+  --popover-foreground:  #F7F8FA;
+
+  /* Primary = navigation blue (accent, used sparingly) */
+  --primary:             #4F7CFF;
+  --primary-foreground:  #F7F8FA;
+
+  --secondary:           #16161F;
+  --secondary-foreground:#F7F8FA;
+
+  --muted:               #14141C;
+  --muted-foreground:    #9AA3B2;   /* muted text           */
+
+  --accent:              #1A1A24;
+  --accent-foreground:   #F7F8FA;
+
+  --destructive:         #f0556a;
+  --destructive-foreground: #F7F8FA;
+
+  --border:              rgba(255, 255, 255, 0.09);
+  --input:               rgba(255, 255, 255, 0.12);
+  --ring:                #4F7CFF;
+
+  /* Brand raws (for gradients/glows) */
+  --navy:                #050507;
+  --nav-blue:            #4F7CFF;
+  --nav-blue-2:          #6D8EFF;
+
+  /* z-index scale */
+  --z-base: 0; --z-raised: 10; --z-overlay: 20; --z-panel: 30; --z-modal: 50;
+}
+
+/* ─── Base reset ────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  letter-spacing: -0.011em;   /* tighter, Linear/Stripe-like */
+}
+
+/* Display headings — editorial serif */
+.font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.015em;
+}
+
+/* ─── Living scene — slowly color-shifting glow (blue / white / teal) ───── */
+/* Rendered globally by <SceneBackground/>; shared by the landing AND the chat. */
+.scene-glow {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 34% at 20% 14%, rgba(79, 124, 255, 0.22), transparent 70%),
+    radial-gradient(32% 28% at 82% 18%, rgba(255, 255, 255, 0.07), transparent 70%),
+    radial-gradient(44% 40% at 62% 88%, rgba(99, 102, 241, 0.18), transparent 70%),
+    radial-gradient(30% 30% at 8% 82%, rgba(20, 184, 166, 0.10), transparent 70%);
+  filter: blur(40px);
+  animation: scene-shift 26s ease-in-out infinite alternate;
+}
+.scene-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes scene-shift {
+  0%   { transform: translate3d(0, 0, 0) scale(1);    filter: blur(40px) hue-rotate(0deg); }
+  50%  { transform: translate3d(2%, -2%, 0) scale(1.08); filter: blur(52px) hue-rotate(22deg); }
+  100% { transform: translate3d(-2%, 2%, 0) scale(1.04); filter: blur(44px) hue-rotate(-16deg); }
+}
+
+/* ─── Glass surfaces — subtle, not frosted-flashy ───────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.glass-strong {
+  background: rgba(10, 10, 16, 0.72);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.glass-hover { transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(79, 124, 255, 0.30);
+}
+
+/* card with a soft inner top highlight (premium surface) */
+.surface {
+  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0) 40%), var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ─── Gradient helpers — restrained, blue-based ─────────────────────────── */
+.gradient-text {
+  background: linear-gradient(180deg, #FFFFFF 0%, #C7D2FE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-accent-blue { color: var(--nav-blue); }
+.gradient-blue { background-image: linear-gradient(135deg, #4F7CFF, #6D8EFF); }
+.gradient-user { background-image: linear-gradient(135deg, #4F7CFF, #5B86FF); }
+
+/* Focus ring glow for the composer / inputs */
+.ring-glow { position: relative; }
+.ring-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(120deg, rgba(79,124,255,0.55), rgba(109,142,255,0.30));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+.ring-glow:focus-within::before { opacity: 1; }
+
+/* ─── Buttons ───────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: var(--nav-blue);
+  color: #fff;
+  box-shadow: 0 6px 18px -8px rgba(79, 124, 255, 0.7), inset 0 1px 0 rgba(255,255,255,0.18);
+  transition: background .18s ease, box-shadow .2s ease, transform .12s ease;
+}
+.btn-primary:hover {
+  background: #5E87FF;
+  box-shadow: 0 10px 26px -8px rgba(79, 124, 255, 0.85), inset 0 1px 0 rgba(255,255,255,0.22);
+}
+.btn-primary:active { transform: translateY(1px); }
+
+/* Subtle glow accents */
+.glow-blue { box-shadow: 0 0 0 1px rgba(79,124,255,0.25), 0 0 50px -10px rgba(79,124,255,0.5); }
+
+/* ─── Presence orb — small blue sphere used in chat (not on landing) ─────── */
+.orb {
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 32% 28%, #AFC3FF, transparent 45%),
+    radial-gradient(circle at 70% 72%, #2D5BFF, transparent 55%),
+    linear-gradient(135deg, #4F7CFF, #3A5BD9);
+  box-shadow: 0 0 32px -8px rgba(79, 124, 255, 0.7), inset 0 0 18px rgba(255,255,255,0.18);
+  animation: orb-float 7s ease-in-out infinite;
+}
+
+/* ─── Keyframes ─────────────────────────────────────────────────────────── */
+@keyframes drift       { from { transform: translate(0,0) scale(1); } to { transform: translate(-4%, 4%) scale(1.08); } }
+@keyframes orb-float   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes caret-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes msg-up      { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade-up     { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse-dot   { 0%,100% { opacity: .35; transform: scale(.8); } 50% { opacity: 1; transform: scale(1); } }
+
+/* Streaming caret */
+.caret {
+  display: inline-block;
+  width: 2px; height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--nav-blue);
+  border-radius: 1px;
+  animation: caret-blink 1s ease-in-out infinite;
+}
+
+/* ─── Scroll-driven reveal (progressive enhancement) ────────────────────── */
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(34px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Default: visible (fallback for browsers without scroll-timeline). */
+.reveal { opacity: 1; }
+@supports (animation-timeline: view()) {
+  .reveal {
+    opacity: 0;
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 28%;
+  }
+}
+
+/* Entrances */
+.msg-enter  { animation: msg-up 0.22s ease-out both; }
+.fade-up    { animation: fade-up 0.5s cubic-bezier(.2,.7,.2,1) both; }
+.fade-up-1  { animation-delay: .05s; }
+.fade-up-2  { animation-delay: .12s; }
+.fade-up-3  { animation-delay: .2s; }
+.fade-up-4  { animation-delay: .28s; }
+
+/* Typing indicator dots */
+.typing span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin: 0 2px;
+  border-radius: 9999px;
+  background: var(--nav-blue-2);
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+
+/* ─── Custom scrollbar ──────────────────────────────────────────────────── */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb:hover { background: rgba(79,124,255,0.4); }
+
+/* ─── Accessibility: respect reduced motion ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .scene-glow, .orb { animation: none !important; }
+  .reveal { opacity: 1 !important; animation: none !important; }
+}
