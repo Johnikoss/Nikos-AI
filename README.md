@@ -8,7 +8,7 @@ Built with **Next.js (App Router)** + the **OpenAI API**. Responses stream token
 ## Setup
 
 ```bash
-cd nikos-ai
+cd C:\Users\theon\OneDrive\Desktop\Skills\nikos-ai 
 npm install
 cp .env.local.example .env.local   # then add your OPENAI_API_KEY
 npm run dev
