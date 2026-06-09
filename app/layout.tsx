@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Fraunces } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { SceneBackground } from "@/components/scene-background";
 import { LogoDefs } from "@/components/logo";
 import "./globals.css";
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SceneBackground />
         <LogoDefs />
         {children}
+        <Analytics />
       </body>
     </html>
   );
