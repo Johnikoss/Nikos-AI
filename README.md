@@ -42,7 +42,7 @@ npm start
 ```
 =======
 My life navigator app/chatbot prototype
-50c3322306f8c58f9600f94524523ad57553d8db
+8e6a0c931f1f62fb6d17625197342c57021a37ef
 =======
 
 >>>>>>> 8e6a0c931f1f62fb6d17625197342c57021a37ef
