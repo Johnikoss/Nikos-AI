@@ -4,12 +4,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUp,
+  Check,
+  ChevronDown,
+  ChevronRight,
   Compass,
+  FolderClosed,
   LifeBuoy,
   Lock,
   Map as MapIcon,
   Menu,
   MessageCircle,
+  Pencil,
   Plus,
   Scale,
   Settings2,
@@ -23,11 +28,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 import { Conversation, Message, uid } from "@/lib/types";
-import { loadConversations, newConversation, saveConversations, titleFrom } from "@/lib/store";
+import { loadConversations, newConversation, renameConversation, saveConversations, titleFrom } from "@/lib/store";
 import { MODES, ModeId, getMode } from "@/lib/modes";
 import { Profile, loadProfile, saveProfile, profileToMemory } from "@/lib/memory";
 import { Onboarding } from "@/components/onboarding";
 import { PlansModal } from "@/components/plans-modal";
+import { Composer } from "@/components/chat/composer";
 import { Logo } from "@/components/logo";
 
 /* Icon resolver for modes (lucide names â†’ components) */
@@ -68,20 +74,13 @@ function ModeChip({
       onClick={onClick}
       title={mode.blurb}
       className={cn(
-        "group inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-all cursor-pointer",
+        "group inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-all cursor-pointer",
         active
-          ? "border-[#4F7CFF]/60 bg-[#4F7CFF]/15 text-foreground"
-          : "border-border text-muted-foreground glass-hover hover:text-foreground"
+          ? "border-white/20 bg-white/10 text-foreground"
+          : "border-border text-muted-foreground hover:bg-white/5 hover:text-foreground"
       )}
     >
-      <span
-        className={cn(
-          "inline-flex size-5 items-center justify-center rounded-full background-gradient-to-br text-white",
-          mode.gradient
-        )}
-      >
-        <Icon className="size-3" />
-      </span>
+      <Icon className="size-3.5" />
       {mode.label}
     </button>
   );
@@ -94,6 +93,7 @@ function Sidebar({
   onSelect,
   onNew,
   onDelete,
+  onRename,
   onClose,
   onEditProfile,
   onUpgrade,
@@ -105,6 +105,7 @@ function Sidebar({
   onSelect: (id: string) => void;
   onNew: () => void;
   onDelete: (id: string) => void;
+  onRename: (id: string, title: string) => void;
   onClose: () => void;
   onEditProfile: () => void;
   onUpgrade: () => void;
@@ -113,6 +114,105 @@ function Sidebar({
     profile.name
       ? profile.name.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()
       : "";
+
+  const [view, setView] = useState<"recent" | "projects">("recent");
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const [collapsed, setCollapsed] = useState<Set<ModeId>>(new Set());
+
+  function startRename(c: Conversation) {
+    setRenamingId(c.id);
+    setDraft(c.title);
+  }
+  function commitRename() {
+    if (renamingId) onRename(renamingId, draft);
+    setRenamingId(null);
+    setDraft("");
+  }
+
+  // One conversation row, shared by both views. Handles inline rename.
+  function Row(c: Conversation) {
+    const m = getMode(c.mode);
+    const Icon = ICONS[m.icon];
+    const active = c.id === activeId;
+    const isRenaming = renamingId === c.id;
+    return (
+      <div
+        key={c.id}
+        role="button"
+        tabIndex={0}
+        onClick={() => !isRenaming && onSelect(c.id)}
+        onKeyDown={(e) => e.key === "Enter" && !isRenaming && onSelect(c.id)}
+        className={cn(
+          "group flex items-center gap-2.5 rounded-lg px-2.5 py-2 cursor-pointer transition-colors",
+          active ? "bg-[#4F7CFF]/15 text-foreground" : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+        )}
+      >
+        <span className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white", m.gradient)}>
+          <Icon className="size-3" />
+        </span>
+
+        {isRenaming ? (
+          <input
+            autoFocus
+            value={draft}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === "Enter") commitRename();
+              if (e.key === "Escape") {
+                setRenamingId(null);
+                setDraft("");
+              }
+            }}
+            className="min-w-0 flex-1 rounded-md border border-[#4F7CFF]/50 bg-black/30 px-1.5 py-0.5 text-[13px] text-foreground outline-none"
+          />
+        ) : (
+          <span className="min-w-0 flex-1 truncate text-[13px] leading-snug">{c.title}</span>
+        )}
+
+        {isRenaming ? (
+          <button
+            className="shrink-0 rounded-md p-1 text-muted-foreground/70 hover:bg-white/10 hover:text-foreground"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.stopPropagation();
+              commitRename();
+            }}
+            aria-label="Save name"
+          >
+            <Check className="size-3.5" />
+          </button>
+        ) : (
+          <div className="flex shrink-0 items-center sm:opacity-0 sm:group-hover:opacity-100">
+            <button
+              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-white/10 hover:text-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                startRename(c);
+              }}
+              aria-label={`Rename "${c.title}"`}
+            >
+              <Pencil className="size-3.5" />
+            </button>
+            <button
+              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-white/10 hover:text-red-400"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(c.id);
+              }}
+              aria-label={`Delete "${c.title}"`}
+            >
+              <Trash2 className="size-3.5" />
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
       {open && (
@@ -132,8 +232,19 @@ function Sidebar({
           <span className="text-sm font-semibold tracking-tight">Nikos AI</span>
         </Link>
 
-        {/* New */}
-        <div className="shrink-0 px-3 py-3">
+        {/* Projects toggle + New */}
+        <div className="shrink-0 space-y-2 px-3 py-3">
+          <button
+            onClick={() => setView((v) => (v === "projects" ? "recent" : "projects"))}
+            className={cn(
+              "flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-[13px] font-medium transition-colors",
+              view === "projects"
+                ? "border-[#4F7CFF]/50 bg-[#4F7CFF]/10 text-foreground"
+                : "border-border text-muted-foreground hover:bg-white/5 hover:text-foreground"
+            )}
+          >
+            <FolderClosed className="size-3.5" /> Projects
+          </button>
           <button
             onClick={onNew}
             className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium"
@@ -144,50 +255,62 @@ function Sidebar({
 
         <div className="shrink-0 px-4 pb-1 pt-1">
           <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Recent
+            {view === "projects" ? "Projects" : "Recent"}
           </span>
         </div>
 
         <ScrollArea className="flex-1">
-          <div className="space-y-0.5 px-2 pb-2">
-            {conversations.length === 0 ? (
-              <p className="px-2 py-4 text-xs text-muted-foreground">No conversations yet.</p>
-            ) : (
-              conversations.map((c) => {
-                const m = getMode(c.mode);
-                const Icon = ICONS[m.icon];
-                const active = c.id === activeId;
-                return (
-                  <div
-                    key={c.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => onSelect(c.id)}
-                    onKeyDown={(e) => e.key === "Enter" && onSelect(c.id)}
-                    className={cn(
-                      "group flex items-center gap-2.5 rounded-lg px-2.5 py-2 cursor-pointer transition-colors",
-                      active ? "bg-[#4F7CFF]/15 text-foreground" : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-                    )}
-                  >
-                    <span className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-md background-gradient-to-br text-white", m.gradient)}>
-                      <Icon className="size-3" />
-                    </span>
-                    <span className="flex-1 truncate text-[13px] leading-snug">{c.title}</span>
-                    <button
-                      className="shrink-0 rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-white/10 hover:text-red-400 sm:opacity-0 sm:group-hover:opacity-100"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(c.id);
-                      }}
-                      aria-label={`Delete "${c.title}"`}
-                    >
-                      <Trash2 className="size-3.5" />
-                    </button>
-                  </div>
-                );
-              })
-            )}
-          </div>
+          {view === "recent" ? (
+            <div className="space-y-0.5 px-2 pb-2">
+              {conversations.length === 0 ? (
+                <p className="px-2 py-4 text-xs text-muted-foreground">No conversations yet.</p>
+              ) : (
+                conversations.map((c) => Row(c))
+              )}
+            </div>
+          ) : (
+            <div className="space-y-1 px-2 pb-2">
+              {conversations.length === 0 ? (
+                <p className="px-2 py-4 text-xs text-muted-foreground">No conversations yet.</p>
+              ) : (
+                MODES.map((m) => {
+                  const items = conversations.filter((c) => (c.mode ?? "navigate") === m.id);
+                  const Icon = ICONS[m.icon];
+                  const isCollapsed = collapsed.has(m.id);
+                  return (
+                    <div key={m.id}>
+                      <button
+                        onClick={() =>
+                          setCollapsed((prev) => {
+                            const n = new Set(prev);
+                            n.has(m.id) ? n.delete(m.id) : n.add(m.id);
+                            return n;
+                          })
+                        }
+                        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+                      >
+                        {isCollapsed ? <ChevronRight className="size-3.5 shrink-0" /> : <ChevronDown className="size-3.5 shrink-0" />}
+                        <span className={cn("inline-flex size-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white", m.gradient)}>
+                          <Icon className="size-2.5" />
+                        </span>
+                        <span className="flex-1 truncate text-[12px] font-medium">{m.label}</span>
+                        <span className="shrink-0 text-[11px] text-muted-foreground/60">{items.length}</span>
+                      </button>
+                      {!isCollapsed && (
+                        <div className="ml-3 space-y-0.5 border-l border-border pl-1.5">
+                          {items.length === 0 ? (
+                            <p className="px-2 py-1.5 text-[11px] text-muted-foreground/60">No chats yet.</p>
+                          ) : (
+                            items.map((c) => Row(c))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
         </ScrollArea>
 
         {/* Footer — memory + account/membership */}
@@ -212,7 +335,7 @@ function Sidebar({
 
           {/* Account + membership (ChatGPT-style) */}
           <div className="flex items-center gap-2.5 rounded-xl border border-border px-2.5 py-2">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full background-gradient-to-br from-[#4F7CFF] to-[#6D5CFF] text-[12px] font-semibold text-white">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4F7CFF] to-[#6D5CFF] text-[12px] font-semibold text-white">
               {initials || "?"}
             </span>
             <span className="min-w-0 flex-1">
@@ -265,37 +388,23 @@ function MessageRow({ message, streaming }: { message: Message; streaming: boole
   );
 }
 function EmptyState({
-  profile,
   mode,
   greeting,
   onSend,
 }: {
-  profile: Profile;
   mode: ModeId;
   greeting: string;
   onSend: (text: string) => void;
 }) {
-  const m = getMode(mode);
   const starters = STARTERS[mode];
   return (
     <div className="flex flex-col items-center pt-14 text-center sm:pt-24">
-      {/* Logo beside the greeting line, Claude-style */}
-      <div className="flex items-center justify-center gap-3">
-        <Logo className="size-8 shrink-0 text-foreground sm:size-9" />
-        <h1 className="font-serif text-[1.6rem] font-medium leading-tight sm:text-[2.1rem]">
-          <span className="gradient-text">{greeting}</span>
-        </h1>
-      </div>
-      {profile.focus && (
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Still navigating: {profile.focus}.
-        </p>
-      )}
+      <h1 className="text-[1.5rem] font-normal leading-tight text-foreground/85 sm:text-[1.9rem]">
+        {greeting}
+      </h1>
 
       <div className="mt-10 w-full max-w-md text-left">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          {m.label}· try
-        </p>
+        <p className="mb-2 text-[13px] text-muted-foreground">Suggestions</p>
         <div className="flex flex-col gap-2">
           {starters.map((s) => (
             <button
@@ -440,6 +549,10 @@ export default function ChatPage() {
     });
   }, []);
 
+  const handleRename = useCallback((id: string, title: string) => {
+    setConversations((prev) => renameConversation(prev, id, title));
+  }, []);
+
   // Picking a mode updates the active conversation (if any) and the picker.
   function pickMode(id: ModeId) {
     setMode(id);
@@ -578,6 +691,7 @@ export default function ChatPage() {
         onSelect={handleSelect}
         onNew={handleNew}
         onDelete={handleDelete}
+        onRename={handleRename}
         onClose={() => setSidebarOpen(false)}
         onEditProfile={() => setShowOnboarding(true)}
         onUpgrade={() => setShowPlans(true)}
@@ -599,7 +713,7 @@ export default function ChatPage() {
             {activeConv && activeConv.title !== "New conversation" ? activeConv.title : "Nikos AI"}
           </span>
           <span className="hidden items-center gap-1.5 rounded-full glass px-2.5 py-1 text-[11px] text-muted-foreground sm:inline-flex">
-            <span className={cn("inline-flex size-3.5 items-center justify-center rounded-full background-gradient-to-br", activeModeObj.gradient)} />
+            <span className="size-1.5 rounded-full bg-foreground/40" />
             {activeModeObj.label} mode
           </span>
         </header>
@@ -609,7 +723,6 @@ export default function ChatPage() {
           <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
             {isEmpty ? (
               <EmptyState
-                profile={profile}
                 mode={mode}
                 greeting={resolveGreeting(profile.name, greetingIdx)}
                 onSend={send}
@@ -643,33 +756,18 @@ export default function ChatPage() {
               ))}
             </div>
 
-            {/* Input */}
-            <div className="ring-glow flex items-end gap-2.5 rounded-2xl glass-strong px-4 py-3 transition-shadow">
-              <Textarea
-                ref={textareaRef}
-                value={input}
-                rows={1}
-                disabled={streaming}
-                placeholder={activeModeObj.hint}
-                onChange={(e) => {
-                  setInput(e.target.value);
-                  autoGrow();
-                }}
-                onKeyDown={onKeyDown}
-                className="flex-1 resize-none border-0 bg-transparent py-1 text-sm shadow-none focus-visible:ring-0 disabled:opacity-50 min-h-0"
-                style={{ maxHeight: 180 }}
-              />
-              <button
-                disabled={!input.trim() || streaming}
-                onClick={() => send(input)}
-                aria-label="Send message"
-                className="btn-primary inline-flex size-9 shrink-0 items-center justify-center rounded-xl disabled:opacity-40"
-              >
-                <ArrowUp className="size-4" />
-              </button>
-            </div>
+            {/* Input — glass composer with tools (attach · search · tools/slash) */}
+            <Composer
+              value={input}
+              onChange={setInput}
+              onSend={send}
+              disabled={streaming}
+              hint={activeModeObj.hint}
+              activeMode={mode}
+              onPickMode={pickMode}
+            />
             <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
-              Enter to send&nbsp;·&nbsp;Shift+Enter for new line&nbsp;·&nbsp;Nikos remembers your context
+              Enter to send&nbsp;·&nbsp;Shift+Enter for new line&nbsp;·&nbsp;Type&nbsp;<span className="text-foreground/70">/</span>&nbsp;for tools &amp; modes
             </p>
           </div>
         </div>

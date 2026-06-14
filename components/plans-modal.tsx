@@ -94,8 +94,8 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
               className={cn(
                 "relative flex flex-col rounded-2xl border p-5",
                 p.highlight
-                  ? "border-[#4F7CFF]/50 background-gradient-to-br px-3.5 py-2.5 text-sm text-white/35"
-                  : "border-white/10 background-gradient-to-br px-3.5 py-2.5 text-sm text-white/35"
+                  ? "border-[#4F7CFF]/50 bg-[#4F7CFF]/[0.08]"
+                  : "border-white/10 bg-white/[0.02]"
               )}
             >
               {p.highlight && (

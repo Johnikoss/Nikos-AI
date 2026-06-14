@@ -115,6 +115,13 @@ body {
   filter: blur(40px);
   animation: scene-shift 26s ease-in-out infinite alternate;
 }
+/* Chat (/app) background — single static glow, no animation. Calm and focused. */
+.chat-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(45% 38% at 50% 60%, rgba(79, 124, 255, 0.06), transparent 70%);
+}
 .scene-grain {
   position: absolute;
   inset: 0;

@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 type ClientMessage = { role: "user" | "assistant"; content: string };
 
-const MODEL = process.env.OPENAI_MODEL || "gpt-4o";
+const MODEL = process.env.OPENAI_MODEL || "gpt-5.1";
 
 export async function POST(req: Request) {
   if (!process.env.OPENAI_API_KEY) {
@@ -49,7 +49,9 @@ export async function POST(req: Request) {
     const completion = await openai.chat.completions.create({
       model: MODEL,
       stream: true,
-      temperature: 0.6,
+      // GPT-5 models only allow the default temperature; "low" reasoning keeps
+      // replies thoughtful without long pauses before streaming starts.
+      ...(MODEL.startsWith("gpt-5") ? { reasoning_effort: "low" as const } : { temperature: 0.6 }),
       messages: [
         { role: "system", content: buildSystemPrompt({ mode, memory }) },
         ...history.map((m) => ({ role: m.role, content: m.content })),

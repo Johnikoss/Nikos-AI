@@ -1,0 +1,39 @@
+"use client";
+
+// Provide a minimal declaration for process.env in this client-side file
+declare const process: { env: { NEXT_PUBLIC_SUPABASE_URL?: string; NEXT_PUBLIC_SUPABASE_ANON_KEY?: string } };
+
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ""
+);
+
+export default function Callback() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error(error);
+        router.push("/signin");
+        return;
+      }
+
+      if (data.session) {
+        router.push("/app"); // IMPORTANT FIX
+      } else {
+        router.push("/signin");
+      }
+    };
+
+    handleAuth();
+  }, [router]);
+
+   return React.createElement("p", null, "Logging you in...");
+}

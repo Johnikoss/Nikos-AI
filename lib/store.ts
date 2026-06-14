@@ -38,6 +38,21 @@ export function newConversation(mode: Conversation["mode"] = "navigate"): Conver
   };
 }
 
+/** Rename a conversation by id, returning a new sorted list and persisting it. */
+export function renameConversation(
+  list: Conversation[],
+  id: string,
+  title: string
+): Conversation[] {
+  const clean = title.trim();
+  if (!clean) return list;
+  const next = list.map((c) =>
+    c.id === id ? { ...c, title: clean, updatedAt: Date.now() } : c
+  );
+  saveConversations(next);
+  return next;
+}
+
 export function titleFrom(messages: Message[]): string {
   const first = messages.find((m) => m.role === "user");
   if (!first) return "New conversation";

@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 /**
- * Global living background, shared by the landing AND the chat so they match.
- * Layers (back → front): near-black base · slowly color-shifting glow (blue /
- * white / teal, see .scene-glow) · a mesh of crossing lines that web blue around
- * the cursor · faint grain. Pure 2D canvas; goes static under reduced motion.
+ * Global background. The landing gets the living scene (color-shifting glow,
+ * math-graph canvas, cursor crosshair, grain — see .scene-glow). The chat
+ * (/app) gets a calm static version: near-black base + one faint glow, so the
+ * product feels focused rather than showy. Goes static under reduced motion.
  */
 export function SceneBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pathname = usePathname();
+  const isChat = pathname?.startsWith("/app") ?? false;
 
   useEffect(() => {
+    if (isChat) return;
     const canvasEl = canvasRef.current;
     if (!canvasEl) return;
     const context = canvasEl.getContext("2d", { alpha: true });
@@ -20,26 +24,19 @@ export function SceneBackground() {
     const c = context;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const LINK = 150; // node ↔ node line distance
-    const CURSOR_LINK = 210; // node ↔ cursor line distance
+    const GRID = 46; // grid cell size (px)
 
     let w = 0;
     let h = 0;
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     const mouse = { x: -9999, y: -9999, active: false };
 
-    type Node = { x: number; y: number; vx: number; vy: number };
-    let nodes: Node[] = [];
-
-    function build() {
-      const count = Math.min(120, Math.max(40, Math.round((w * h) / 16000)));
-      nodes = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.22,
-        vy: (Math.random() - 0.5) * 0.22,
-      }));
-    }
+    // animated function curves (sine/cosine plots)
+    const curves = [
+      { amp: 70, freq: 0.0055, speed: 0.18, phase: 0, yFrac: 0.32, color: "79,124,255", alpha: 0.30 },
+      { amp: 110, freq: 0.0034, speed: -0.12, phase: 1.7, yFrac: 0.55, color: "139,108,255", alpha: 0.22 },
+      { amp: 52, freq: 0.0072, speed: 0.24, phase: 3.4, yFrac: 0.7, color: "255,255,255", alpha: 0.10 },
+    ];
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -50,64 +47,72 @@ export function SceneBackground() {
       cv.style.width = w + "px";
       cv.style.height = h + "px";
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
-      build();
     }
 
-    function step() {
-      c.clearRect(0, 0, w, h);
-
-      for (const n of nodes) {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > w) n.vx *= -1;
-        if (n.y < 0 || n.y > h) n.vy *= -1;
-      }
-
-      // crossing lines between nearby nodes (faint white)
+    function drawGrid() {
       c.lineWidth = 1;
-      for (let i = 0; i < nodes.length; i++) {
-        const a = nodes[i];
-        for (let j = i + 1; j < nodes.length; j++) {
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const d = Math.hypot(dx, dy);
-          if (d < LINK) {
-            c.strokeStyle = `rgba(255,255,255,${(1 - d / LINK) * 0.15})`;
-            c.beginPath();
-            c.moveTo(a.x, a.y);
-            c.lineTo(b.x, b.y);
-            c.stroke();
-          }
-        }
-        // tiny node glints
-        c.fillStyle = "rgba(255,255,255,0.18)";
-        c.fillRect(a.x - 0.6, a.y - 0.6, 1.2, 1.2);
+      c.strokeStyle = "rgba(255,255,255,0.045)";
+      c.beginPath();
+      for (let x = (w / 2) % GRID; x <= w; x += GRID) {
+        c.moveTo(Math.round(x) + 0.5, 0);
+        c.lineTo(Math.round(x) + 0.5, h);
       }
+      for (let y = (h / 2) % GRID; y <= h; y += GRID) {
+        c.moveTo(0, Math.round(y) + 0.5);
+        c.lineTo(w, Math.round(y) + 0.5);
+      }
+      c.stroke();
+    }
 
-      // cursor weaves a blue web + soft glow
-      if (mouse.active) {
-        for (const n of nodes) {
-          const d = Math.hypot(n.x - mouse.x, n.y - mouse.y);
-          if (d < CURSOR_LINK) {
-            c.strokeStyle = `rgba(79,124,255,${(1 - d / CURSOR_LINK) * 0.5})`;
-            c.beginPath();
-            c.moveTo(n.x, n.y);
-            c.lineTo(mouse.x, mouse.y);
-            c.stroke();
-          }
+    function drawCurves(t: number) {
+      for (const cu of curves) {
+        const baseY = h * cu.yFrac;
+        c.beginPath();
+        for (let x = 0; x <= w; x += 6) {
+          const y = baseY + cu.amp * Math.sin(x * cu.freq + t * cu.speed + cu.phase);
+          if (x === 0) c.moveTo(x, y);
+          else c.lineTo(x, y);
         }
-        const g = c.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 230);
-        g.addColorStop(0, "rgba(79,124,255,0.12)");
-        g.addColorStop(1, "rgba(79,124,255,0)");
-        c.fillStyle = g;
-        c.fillRect(mouse.x - 230, mouse.y - 230, 460, 460);
+        c.strokeStyle = `rgba(${cu.color},${cu.alpha})`;
+        c.lineWidth = 1.4;
+        c.stroke();
       }
+    }
+
+    function drawCursor() {
+      if (!mouse.active) return;
+      // crosshair (graph reticle)
+      c.strokeStyle = "rgba(79,124,255,0.22)";
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(0, mouse.y + 0.5);
+      c.lineTo(w, mouse.y + 0.5);
+      c.moveTo(mouse.x + 0.5, 0);
+      c.lineTo(mouse.x + 0.5, h);
+      c.stroke();
+      // soft glow at the intersection
+      const g = c.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 240);
+      g.addColorStop(0, "rgba(79,124,255,0.14)");
+      g.addColorStop(1, "rgba(79,124,255,0)");
+      c.fillStyle = g;
+      c.fillRect(mouse.x - 240, mouse.y - 240, 480, 480);
+      // plotted point
+      c.fillStyle = "rgba(157,180,255,0.9)";
+      c.beginPath();
+      c.arc(mouse.x, mouse.y, 2.5, 0, Math.PI * 2);
+      c.fill();
+    }
+
+    function step(t: number) {
+      c.clearRect(0, 0, w, h);
+      drawGrid();
+      drawCurves(t * 0.001);
+      drawCursor();
     }
 
     let raf = 0;
-    function loop() {
-      step();
+    function loop(t: number) {
+      step(t);
       raf = requestAnimationFrame(loop);
     }
     function onMove(e: MouseEvent) {
@@ -123,7 +128,7 @@ export function SceneBackground() {
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseout", onLeave);
-    if (reduced) step();
+    if (reduced) step(0);
     else raf = requestAnimationFrame(loop);
 
     return () => {
@@ -132,7 +137,16 @@ export function SceneBackground() {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseout", onLeave);
     };
-  }, []);
+  }, [isChat]);
+
+  if (isChat) {
+    return (
+      <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[#050507]" />
+        <div className="chat-glow" />
+      </div>
+    );
+  }
 
   return (
     <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden">

@@ -17,7 +17,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { Logo, LogoLockup } from "@/components/logo";
-import { LetterReveal, Reveal, FadeIn } from "@/components/landing/motion-text";
+import { LineRise, Reveal, FadeIn } from "@/components/landing/motion-text";
 import { ContainerScroll } from "@/components/landing/container-scroll";
 
 const CARD =
@@ -60,23 +60,26 @@ function Hero() {
   return (
     <section className="relative mx-auto flex max-w-3xl flex-col items-center px-5 pt-44 text-center sm:pt-52">
       <FadeIn delay={0.1}>
-        <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 background-gradient-to-br px-3.5 py-1.5 text-[12px] text-white/60">
+        <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-[12px] text-white/60">
           <Compass className="size-3.5 text-[#6D8EFF]" />
           A navigation system for your life
         </span>
       </FadeIn>
 
-      <h1 className="font-serif text-[2.6rem] font-medium leading-[1.05] text-white sm:text-[4.25rem]">
-        <LetterReveal text="Stop drowning in options." delay={0.15} />
-        <span className="mt-1 block italic text-[#A9C0FF]">
-          <LetterReveal text="Find the one move that matters." delay={0.55} />
-        </span>
+      <h1 className="font-serif text-[2.6rem] font-semibold leading-[1.05] text-white sm:text-[4.25rem]">
+        <LineRise delay={0.15}>Stop drowning in options.</LineRise>
+        <LineRise
+          delay={0.4}
+          className="mt-1 block font-serif text-[2.1rem] font-light italic text-white/75 sm:text-[3.2rem]"
+        >
+          Find the one move that matters.
+        </LineRise>
       </h1>
 
       <FadeIn delay={1.25}>
         <p className="mt-7 max-w-xl text-pretty text-[16px] leading-relaxed text-white/55 sm:text-lg">
           Nikos is a personal strategist that helps you make decisions, design
-          systems, and stay aligned with where you&rsquo;re actually trying to go”
+          systems, and stay aligned with where you&rsquo;re actually trying to go —
           and it remembers the bigger picture between every conversation.
         </p>
       </FadeIn>
@@ -89,12 +92,12 @@ function Hero() {
           >
             Start navigating <ArrowRight className="size-4" />
           </Link>
-          <a
-            href="#how"
+          <Link
+            href="/signin"
             className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/5"
           >
-            See how it works
-          </a>
+            Sign in
+          </Link>
         </div>
       </FadeIn>
 
@@ -169,7 +172,7 @@ function Solution() {
         {LOOP.map((step, i) => (
           <Reveal key={step.label} delay={i * 0.1}>
             <div className={`${CARD} relative h-full p-6`}>
-              <div className="mb-4 inline-flex size-10 items-center justify-center rounded-xl background-gradient-to-br from-[#4F7CFF] to-[#6D8EFF] text-white">
+              <div className="mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4F7CFF] to-[#6D8EFF] text-white">
                 <step.icon className="size-5" />
               </div>
               <p className="text-sm font-semibold text-white">{step.label}</p>
@@ -187,7 +190,7 @@ function Solution() {
 function UserBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[85%] rounded-2xl rounded-br-md background-gradient-to-br from-[#4F7CFF] to-[#5B86FF] px-4 py-2.5 text-sm text-white">
+      <div className="max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-br from-[#4F7CFF] to-[#5B86FF] px-4 py-2.5 text-sm text-white">
         {children}
       </div>
     </div>
@@ -197,7 +200,7 @@ function NikosBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-2.5">
       <Logo className="mt-0.5 size-6 shrink-0 text-white" />
-      <div className="max-w-[88%] rounded-2xl rounded-tl-md border border-white/10 background-gradient-to-br px-4 py-3 text-sm leading-[1.65] text-white/90">
+      <div className="max-w-[88%] rounded-2xl rounded-tl-md border border-white/10 bg-white/[0.03] px-4 py-3 text-sm leading-[1.65] text-white/90">
         {children}
       </div>
     </div>
@@ -337,7 +340,7 @@ function FinalCTA() {
   return (
     <section className="mx-auto mt-40 max-w-3xl px-5">
       <Reveal>
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 background-gradient-to-br px-6 py-16 text-center">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-16 text-center">
           <div
             className="pointer-events-none absolute left-1/2 top-0 h-40 width-[28rem] -translate-x-1/2 rounded-full opacity-60 blur-[80px]"
             style={{ background: "radial-gradient(circle, rgba(79,124,255,0.4), transparent 70%)" }}
@@ -370,8 +373,8 @@ function ChatMockup() {
       <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
         <Logo className="size-4 text-white" />
         <span className="text-[13px] font-medium text-white">Nikos AI</span>
-        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-white/10 background-gradient-to-br px-2.5 py-1 text-[11px] text-white/55">
-          <span className="size-2 rounded-full background-gradient-to-br from-[#4F7CFF] to-[#6D8EFF]" /> Decide mode
+        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-white/55">
+          <span className="size-2 rounded-full bg-gradient-to-br from-[#4F7CFF] to-[#6D8EFF]" /> Decide mode
         </span>
       </div>
 
@@ -391,7 +394,7 @@ function ChatMockup() {
       </div>
 
       <div className="border-t border-white/10 p-3">
-        <div className="flex items-center gap-2 rounded-xl border border-white/10 background-gradient-to-br px-3.5 py-2.5 text-sm text-white/35">
+        <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white/35">
           What&rsquo;s on your mind right now?
           <span className="ml-auto inline-flex size-7 items-center justify-center rounded-lg bg-white text-black">
             <ArrowUp className="size-4" />

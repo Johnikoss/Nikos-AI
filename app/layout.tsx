@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter, Roboto_Slab } from "next/font/google";
 import { SceneBackground } from "@/components/scene-background";
 import { LogoDefs } from "@/components/logo";
 import "./globals.css";
@@ -11,11 +11,11 @@ const inter = Inter({
   display: "swap",
 });
 
-// Editorial serif for display headings + wordmark (premium, original).
-const fraunces = Fraunces({
+// Display slab serif for headings + wordmark (Roboto Slab).
+// Keeps the --font-fraunces variable name so globals.css (--font-serif) is unchanged.
+const slab = Roboto_Slab({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-fraunces",
   display: "swap",
 });
@@ -34,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang="en" className={`${inter.variable} ${slab.variable}`}>
       <body>
         {/* Global living background — shared by the landing and the chat */}
         <SceneBackground />

@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Nikos brand mark — a bold rounded "N" whose final stroke rises into an upward
- * navigation arrow (direction / momentum). Navy → blue → violet gradient.
+ * Nikos brand mark — a rounded-stroke "N" whose right stroke rises into an
+ * upward navigation arrow (direction / momentum). Identical geometry and
+ * colors to the favicon (app/icon.svg): navy → brand blue → violet gradient.
  * The gradient ("nikos-grad") is defined once globally via <LogoDefs/> in the
  * root layout, so every instance renders identically with no duplicate ids.
  *
@@ -10,11 +11,9 @@ import { cn } from "@/lib/utils";
  */
 export function Logo({
   className,
-  strokeWidth = 9,
   mono = false,
 }: {
   className?: string;
-  strokeWidth?: number;
   mono?: boolean;
 }) {
   const stroke = mono ? "currentColor" : "url(#nikos-grad)";
@@ -24,24 +23,12 @@ export function Logo({
       className={cn("shrink-0", className)}
       role="img"
       aria-label="Nikos"
-      fill="none"
     >
-      {/* the N, with the right stroke climbing past the top */}
-      <path
-        d="M16 50 L16 18 L40 50 L40 11"
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* upward navigation arrowhead */}
-      <path
-        d="M30.5 21 L40 11 L49.5 21"
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {/* Same paths as app/icon.svg: the N, then the arrowhead on its right stroke. */}
+      <g fill="none" stroke={stroke} strokeWidth="7.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 47 L19 21 L39 47 L39 16" />
+        <path d="M31 24 L39 16 L47 24" />
+      </g>
     </svg>
   );
 }
@@ -51,7 +38,8 @@ export function LogoDefs() {
   return (
     <svg width="0" height="0" aria-hidden className="absolute">
       <defs>
-        <linearGradient id="nikos-grad" x1="20" y1="8" x2="44" y2="54" gradientUnits="userSpaceOnUse">
+        {/* Same stops/geometry as the favicon gradient (app/icon.svg). */}
+        <linearGradient id="nikos-grad" x1="20" y1="10" x2="44" y2="56" gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor="#3B4BA6" />
           <stop offset="0.5" stopColor="#4F7CFF" />
           <stop offset="1" stopColor="#8B6CFF" />

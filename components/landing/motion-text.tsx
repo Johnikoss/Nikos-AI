@@ -49,6 +49,30 @@ export function LetterReveal({
   );
 }
 
+/** Smooth bottom-to-top rise for a whole line of headline text. */
+export function LineRise({
+  children,
+  className,
+  delay = 0,
+  y = 44,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+  y?: number;
+}) {
+  return (
+    <motion.span
+      className={cn("inline-block", className)}
+      initial={{ opacity: 0, y }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay }}
+    >
+      {children}
+    </motion.span>
+  );
+}
+
 /** Fade + rise on scroll into view. */
 export function Reveal({
   children,
