@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Nikos-AI
 
 A cognitive navigation system — not a chatbot, coach, or planner. It helps you think clearly, find the real constraint, separate feeling from fact, and take one useful step.
@@ -8,7 +7,6 @@ Built with **Next.js (App Router)** + the **OpenAI API**. Responses stream token
 ## Setup
 
 ```bash
-cd nikos-ai
 npm install
 cp .env.local.example .env.local   # then add your OPENAI_API_KEY
 npm run dev
@@ -21,7 +19,7 @@ Open http://localhost:3000.
 | Variable         | Required | Default  | Notes                          |
 | ---------------- | -------- | -------- | ------------------------------ |
 | `OPENAI_API_KEY` | yes      | —        | Your OpenAI key.               |
-| `OPENAI_MODEL`   | no       | `gpt-4o` | Any chat-completions model.    |
+| `OPENAI_MODEL`   | no       | `gpt-5.1` | Any chat-completions model.    |
 
 ## How it works
 
@@ -40,9 +38,3 @@ Open http://localhost:3000.
 npm run build
 npm start
 ```
-=======
-My life navigator app/chatbot prototype
-50c3322306f8c58f9600f94524523ad57553d8db
-=======
-
->>>>>>> 8e6a0c931f1f62fb6d17625197342c57021a37ef
