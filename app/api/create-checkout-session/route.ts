@@ -1,9 +1,8 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-  apiVersion: "2026-05-27.dahlia",
-});
+// The Stripe SDK isn't compatible with the Edge runtime — run on Node.
+export const runtime = "nodejs";
 
 // The paid plans shown in the pricing modal. Prices are defined here in cents,
 // so you don't have to create Products/Prices in the Stripe dashboard first.
@@ -16,12 +15,18 @@ type PlanId = keyof typeof PLANS;
 
 export async function POST(req: NextRequest) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
       return NextResponse.json(
         { error: "Stripe is not configured (missing STRIPE_SECRET_KEY)." },
         { status: 500 }
       );
     }
+
+    // Construct Stripe lazily, inside the handler. Doing it at module scope runs
+    // during `next build` (page-data collection), where the env var may be
+    // missing — that throws and fails the build.
+    const stripe = new Stripe(secretKey, { apiVersion: "2026-05-27.dahlia" });
 
     const { plan, email } = (await req.json().catch(() => ({}))) as {
       plan?: string;
