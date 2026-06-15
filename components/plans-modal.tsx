@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, X, Zap } from "lucide-react";
+import { useState } from "react";
+import { Check, Loader2, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Plan = {
@@ -65,6 +66,32 @@ const PLANS: Plan[] = [
 ];
 
 export function PlansModal({ onClose }: { onClose: () => void }) {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function startCheckout(planId: string) {
+    setError(null);
+    setLoadingPlan(planId);
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planId }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        throw new Error(data.error ?? "Could not start checkout.");
+      }
+
+      // Hand off to Stripe's hosted checkout page.
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not start checkout.");
+      setLoadingPlan(null);
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} aria-hidden />
@@ -120,10 +147,10 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
               </ul>
 
               <button
-                disabled={p.current}
-                onClick={onClose}
+                disabled={p.current || loadingPlan !== null}
+                onClick={() => (p.current ? onClose() : startCheckout(p.id))}
                 className={cn(
-                  "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-colors",
+                  "flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors disabled:opacity-60",
                   p.current
                     ? "cursor-default border border-white/10 text-muted-foreground"
                     : p.highlight
@@ -131,14 +158,18 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
                     : "border border-white/15 text-foreground hover:bg-white/5"
                 )}
               >
-                {p.cta}
+                {loadingPlan === p.id && <Loader2 className="size-4 animate-spin" />}
+                {loadingPlan === p.id ? "Redirecting…" : p.cta}
               </button>
             </div>
           ))}
         </div>
 
+        {error && (
+          <p className="mt-4 text-center text-[12px] text-red-300">{error}</p>
+        )}
         <p className="mt-6 text-center text-[11px] text-muted-foreground">
-          Billing isn&rsquo;t live yet — this is a preview of Nikos plans. No charges will be made.
+          Secure checkout powered by Stripe. Cancel anytime.
         </p>
       </div>
     </div>
