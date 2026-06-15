@@ -8,7 +8,8 @@ export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
-    const handle = async () => {
+    const handleAuth = async () => {
+      // THIS is the correct way (wait for session to hydrate)
       const { data, error } = await supabase.auth.getUser();
 
       if (error || !data.user) {
@@ -19,7 +20,7 @@ export default function AuthCallback() {
       router.replace("/app");
     };
 
-    handle();
+    handleAuth();
   }, [router]);
 
   return <p>Signing you in...</p>;
