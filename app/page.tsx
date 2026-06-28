@@ -79,8 +79,8 @@ function Hero() {
       <FadeIn delay={1.25}>
         <p className="mt-7 max-w-xl text-pretty text-[16px] leading-relaxed text-foreground/55 sm:text-lg">
           Niko is a personal strategist that helps you make decisions, design
-          systems, and helps you stay aligned with where you&rsquo;re actually trying to go. It doesn&rsquo;t just give you a list of options
-          and it gives you the next best steps to take.
+          systems, and helps you stay aligned with where you&rsquo;re actually trying to go. It doesn&rsquo;t just give you a list of options,
+         it gives you the next best steps to take.
         </p>
       </FadeIn>
 
