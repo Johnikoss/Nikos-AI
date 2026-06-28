@@ -11,15 +11,15 @@ import {
   FolderClosed,
   LifeBuoy,
   Lock,
-  Map as MapIcon,
   Menu,
   MessageCircle,
   Pencil,
   Plus,
   Scale,
   Settings2,
+  Sparkles,
   Trash2,
-  Workflow,
+  Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -35,9 +35,10 @@ import { Onboarding } from "@/components/onboarding";
 import { PlansModal } from "@/components/plans-modal";
 import { Composer } from "@/components/chat/composer";
 import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 /* Icon resolver for modes (lucide names â†’ components) */
-const ICONS = { Compass, Scale, Map: MapIcon, Workflow, LifeBuoy, MessageCircle } as const;
+const ICONS = { Sparkles, Compass, Scale, Zap, LifeBuoy, MessageCircle } as const;
 
 function Rich({ text }: { text: string }) {
   const blocks = text.split(/\n{2,}/);
@@ -76,8 +77,8 @@ function ModeChip({
       className={cn(
         "group inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-all cursor-pointer",
         active
-          ? "border-white/20 bg-white/10 text-foreground"
-          : "border-border text-muted-foreground hover:bg-white/5 hover:text-foreground"
+          ? "border-foreground/20 bg-foreground/10 text-foreground"
+          : "border-border text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
       )}
     >
       <Icon className="size-3.5" />
@@ -145,10 +146,10 @@ function Sidebar({
         onKeyDown={(e) => e.key === "Enter" && !isRenaming && onSelect(c.id)}
         className={cn(
           "group flex items-center gap-2.5 rounded-lg px-2.5 py-2 cursor-pointer transition-colors",
-          active ? "bg-[#4F7CFF]/15 text-foreground" : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+          active ? "bg-[#4F7CFF]/15 text-foreground" : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
         )}
       >
-        <span className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white", m.gradient)}>
+        <span className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-[#fff]", m.gradient)}>
           <Icon className="size-3" />
         </span>
 
@@ -167,7 +168,7 @@ function Sidebar({
                 setDraft("");
               }
             }}
-            className="min-w-0 flex-1 rounded-md border border-[#4F7CFF]/50 bg-black/30 px-1.5 py-0.5 text-[13px] text-foreground outline-none"
+            className="min-w-0 flex-1 rounded-md border border-[#4F7CFF]/50 bg-background/30 px-1.5 py-0.5 text-[13px] text-foreground outline-none"
           />
         ) : (
           <span className="min-w-0 flex-1 truncate text-[13px] leading-snug">{c.title}</span>
@@ -175,7 +176,7 @@ function Sidebar({
 
         {isRenaming ? (
           <button
-            className="shrink-0 rounded-md p-1 text-muted-foreground/70 hover:bg-white/10 hover:text-foreground"
+            className="shrink-0 rounded-md p-1 text-muted-foreground/70 hover:bg-foreground/10 hover:text-foreground"
             onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => {
               e.stopPropagation();
@@ -188,7 +189,7 @@ function Sidebar({
         ) : (
           <div className="flex shrink-0 items-center sm:opacity-0 sm:group-hover:opacity-100">
             <button
-              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-white/10 hover:text-foreground"
+              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-foreground/10 hover:text-foreground"
               onClick={(e) => {
                 e.stopPropagation();
                 startRename(c);
@@ -198,7 +199,7 @@ function Sidebar({
               <Pencil className="size-3.5" />
             </button>
             <button
-              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-white/10 hover:text-red-400"
+              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:bg-foreground/10 hover:text-red-400"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(c.id);
@@ -216,7 +217,7 @@ function Sidebar({
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-20 bg-black/50 md:hidden" onClick={onClose} aria-hidden />
+        <div className="fixed inset-0 z-20 bg-background/50 md:hidden" onClick={onClose} aria-hidden />
       )}
       <aside
         className={cn(
@@ -229,7 +230,7 @@ function Sidebar({
         {/* Brand */}
         <Link href="/" className="flex h-14 shrink-0 items-center gap-2.5 border-b border-border px-4">
           <Logo className="h-6 w-6 shrink-0" />
-          <span className="text-sm font-semibold tracking-tight">Nikos AI</span>
+          <span className="text-sm font-semibold tracking-tight">Niko AI</span>
         </Link>
 
         {/* Projects toggle + New */}
@@ -240,7 +241,7 @@ function Sidebar({
               "flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-[13px] font-medium transition-colors",
               view === "projects"
                 ? "border-[#4F7CFF]/50 bg-[#4F7CFF]/10 text-foreground"
-                : "border-border text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                : "border-border text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
             )}
           >
             <FolderClosed className="size-3.5" /> Projects
@@ -274,7 +275,7 @@ function Sidebar({
                 <p className="px-2 py-4 text-xs text-muted-foreground">No conversations yet.</p>
               ) : (
                 MODES.map((m) => {
-                  const items = conversations.filter((c) => (c.mode ?? "navigate") === m.id);
+                  const items = conversations.filter((c) => (c.mode ?? "auto") === m.id);
                   const Icon = ICONS[m.icon];
                   const isCollapsed = collapsed.has(m.id);
                   return (
@@ -287,10 +288,10 @@ function Sidebar({
                             return n;
                           })
                         }
-                        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+                        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                       >
                         {isCollapsed ? <ChevronRight className="size-3.5 shrink-0" /> : <ChevronDown className="size-3.5 shrink-0" />}
-                        <span className={cn("inline-flex size-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white", m.gradient)}>
+                        <span className={cn("inline-flex size-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-[#fff]", m.gradient)}>
                           <Icon className="size-2.5" />
                         </span>
                         <span className="flex-1 truncate text-[12px] font-medium">{m.label}</span>
@@ -319,7 +320,7 @@ function Sidebar({
           <button
             onClick={onEditProfile}
             className="flex w-full items-center gap-2.5 rounded-xl glass-hover px-3 py-2 text-left cursor-pointer"
-            title="Edit what Nikos remembers"
+            title="Edit what Niko remembers"
           >
             <Settings2 className="size-4 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1">
@@ -327,7 +328,7 @@ function Sidebar({
                 {profile.name || profile.focus ? "Memory" : "Set up memory"}
               </span>
               <span className="block truncate text-[11px] text-muted-foreground">
-                {profile.focus || "Tell Nikos what you're navigating"}
+                {profile.focus || "Tell Niko what you're navigating"}
               </span>
             </span>
             <Lock className="size-3 shrink-0 text-muted-foreground/60" />
@@ -335,7 +336,7 @@ function Sidebar({
 
           {/* Account + membership (ChatGPT-style) */}
           <div className="flex items-center gap-2.5 rounded-xl border border-border px-2.5 py-2">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4F7CFF] to-[#6D5CFF] text-[12px] font-semibold text-white">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4F7CFF] to-[#6D5CFF] text-[12px] font-semibold text-[#fff]">
               {initials || "?"}
             </span>
             <span className="min-w-0 flex-1">
@@ -344,7 +345,7 @@ function Sidebar({
             </span>
             <button
               onClick={onUpgrade}
-              className="shrink-0 rounded-full bg-white px-3 py-1 text-[12px] font-medium text-black transition-colors hover:bg-white/90"
+              className="shrink-0 rounded-full bg-foreground px-3 py-1 text-[12px] font-medium text-background transition-colors hover:bg-foreground/90"
             >
               Upgrade
             </button>
@@ -364,12 +365,12 @@ function MessageRow({ message, streaming }: { message: Message; streaming: boole
         <div className="flex items-center gap-2 px-1">
           <Logo className="size-3.5 text-muted-foreground" />
           <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Nikos
+            Niko
           </span>
         </div>
       )}
       {isUser ? (
-        <div className="max-w-[80%] rounded-2xl rounded-br-md gradient-user px-4 py-2.5 text-sm text-white shadow-[0_8px_24px_-10px_rgba(79,107,255,0.7)]">
+        <div className="max-w-[80%] rounded-2xl rounded-br-md gradient-user px-4 py-2.5 text-sm text-[#fff] shadow-[0_8px_24px_-10px_rgba(79,107,255,0.7)]">
           <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
         </div>
       ) : (
@@ -377,7 +378,7 @@ function MessageRow({ message, streaming }: { message: Message; streaming: boole
           {message.content ? (
             <Rich text={message.content} />
           ) : streaming ? (
-            <span className="typing inline-flex items-center" aria-label="Nikos is thinking">
+            <span className="typing inline-flex items-center" aria-label="Niko is thinking">
               <span /><span /><span />
             </span>
           ) : null}
@@ -439,21 +440,21 @@ function resolveGreeting(name: string, idx: number): string {
 
 /* Starters per mode */
 const STARTERS: Record<ModeId, string[]> = {
-  navigate: [
+  auto: [
+    "I want to do something with my life.",
     "I have too much on my plate and I can't tell what actually matters.",
+  ],
+  guide: [
+    "I want more but I don't know where to focus.",
     "I keep avoiding one specific thing. Help me see why.",
   ],
   decide: [
     "I'm stuck between two options and can't decide.",
     "Should I stay where I am or make the leap?",
   ],
-  plan: [
-    "Help me turn this vague goal into a real plan.",
+  action: [
+    "I know what I want — help me turn it into real steps.",
     "I want to ship something in 30 days but don't know where to start.",
-  ],
-  system: [
-    "I keep failing at this through willpower. Build me a system.",
-    "I want a routine that survives a bad day.",
   ],
   recover: [
     "I'm overwhelmed and can't think straight.",
@@ -475,7 +476,7 @@ export default function ChatPage() {
   const [profile, setProfile] = useState<Profile>({ name: "", focus: "", style: "direct", notes: [], onboarded: true, updatedAt: 0 });
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPlans, setShowPlans] = useState(false);
-  const [mode, setMode] = useState<ModeId>("navigate");
+  const [mode, setMode] = useState<ModeId>("chat");
   const [greetingIdx, setGreetingIdx] = useState(0);
 
   const threadRef = useRef<HTMLDivElement>(null);
@@ -508,7 +509,7 @@ export default function ChatPage() {
 
   // Keep the visible mode in sync with the active conversation.
   useEffect(() => {
-    if (activeConv) setMode(activeConv.mode ?? "navigate");
+    if (activeConv) setMode(activeConv.mode ?? "chat");
   }, [activeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-scroll.
@@ -710,7 +711,7 @@ export default function ChatPage() {
             <Menu className="size-4" />
           </Button>
           <span className="flex-1 truncate text-sm font-medium">
-            {activeConv && activeConv.title !== "New conversation" ? activeConv.title : "Nikos AI"}
+            {activeConv && activeConv.title !== "New conversation" ? activeConv.title : "Niko AI"}
           </span>
           <span className="hidden items-center gap-1.5 rounded-full glass px-2.5 py-1 text-[11px] text-muted-foreground sm:inline-flex">
             <span className="size-1.5 rounded-full bg-foreground/40" />
@@ -772,6 +773,7 @@ export default function ChatPage() {
           </div>
         </div>
       </div>
+      <ThemeToggle />
     </div>
   );
 }

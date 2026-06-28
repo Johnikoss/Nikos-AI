@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   }
 
   let messages: ClientMessage[];
-  let mode: ModeId = "navigate";
+  let mode: ModeId = "auto";
   let memory = "";
   try {
     const body = await req.json();

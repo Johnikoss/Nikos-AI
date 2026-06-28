@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
@@ -60,7 +60,7 @@ export default function SignInPage() {
     <main className="relative flex min-h-dvh flex-col items-center justify-center px-4">
       {/* back home */}
       <Link href="/"
-        className="absolute left-5 top-5 inline-flex items-center gap-1.5 text-[13px] text-white/50 transition-colors hover:text-white"
+        className="absolute left-5 top-5 inline-flex items-center gap-1.5 text-[13px] text-foreground/50 transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" /> Home
       </Link>
@@ -73,10 +73,10 @@ export default function SignInPage() {
       >
         <div className="mb-6 flex flex-col items-center text-center">
           <Logo className="mb-4 h-11 w-11" />
-          <h1 className="font-serif text-2xl font-medium text-white">
+          <h1 className="font-serif text-2xl font-medium text-foreground">
             {mode === "signin" ? "Welcome back" : "Create your account"}
           </h1>
-          <p className="mt-1.5 text-[13px] text-white/50">
+          <p className="mt-1.5 text-[13px] text-foreground/50">
             {mode === "signin"
               ? "Sign in to pick up where you left off."
               : "Start navigating with memory that sticks."}
@@ -87,14 +87,14 @@ export default function SignInPage() {
           <label className="block">
             <span className="sr-only">Email</span>
             <span className="relative block">
-              <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+              <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-foreground/35" />
               <input
                 type="email"
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#4F7CFF]/60"
+                className="w-full rounded-xl border border-foreground/10 bg-foreground/[0.03] py-3 pl-10 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-[#4F7CFF]/60"
               />
             </span>
           </label>
@@ -102,14 +102,14 @@ export default function SignInPage() {
           <label className="block">
             <span className="sr-only">Password</span>
             <span className="relative block">
-              <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+              <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-foreground/35" />
               <input
                 type="password"
                 autoComplete={mode === "signin" ? "current-password" : "new-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#4F7CFF]/60"
+                className="w-full rounded-xl border border-foreground/10 bg-foreground/[0.03] py-3 pl-10 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-[#4F7CFF]/60"
               />
             </span>
           </label>
@@ -153,9 +153,9 @@ export default function SignInPage() {
           </button>
 
           <div className="flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <span className="text-[11px] text-white/30">or</span>
-            <span className="h-px flex-1 bg-white/10" />
+            <span className="h-px flex-1 bg-foreground/10" />
+            <span className="text-[11px] text-foreground/30">or</span>
+            <span className="h-px flex-1 bg-foreground/10" />
           </div>
 
           <button
@@ -166,7 +166,7 @@ export default function SignInPage() {
               if (err) { setError(err); setLoading(false); }
             }}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-white/3 py-3 text-sm text-white transition-colors hover:bg-white/7 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-foreground/10 bg-foreground/3 py-3 text-sm text-foreground transition-colors hover:bg-foreground/7 disabled:opacity-60"
           >
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden>
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -178,26 +178,26 @@ export default function SignInPage() {
           </button>
         </form>
 
-        <p className="mt-5 text-center text-[13px] text-white/50">
-          {mode === "signin" ? "New to Nikos?" : "Already have an account?"}{" "}
+        <p className="mt-5 text-center text-[13px] text-foreground/50">
+          {mode === "signin" ? "New to Niko?" : "Already have an account?"}{" "}
           <button
             onClick={() => {
               setMode(mode === "signin" ? "signup" : "signin");
               setError(null);
               setNotice(null);
             }}
-            className="font-medium text-[#9DB4FF] transition-colors hover:text-white"
+            className="font-medium text-[#9DB4FF] transition-colors hover:text-foreground"
           >
             {mode === "signin" ? "Create one" : "Sign in"}
           </button>
         </p>
       </motion.div>
 
-      <p className="mt-6 text-[12px] text-white/35">
+      <p className="mt-6 text-[12px] text-foreground/35">
         Or just{" "}
         <a
           href="/app"
-          className="text-white/60 underline-offset-4 hover:underline"
+          className="text-foreground/60 underline-offset-4 hover:underline"
         >
           continue without an account
         </a>

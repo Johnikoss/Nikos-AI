@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { ArrowRight, ArrowLeft, Check, Loader2, Lock, Mail, X, Zap } from "lucide-react";
@@ -121,7 +121,7 @@ export function Onboarding({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} aria-hidden />
       <div
         className={cn(
           "glass-strong ring-glow relative z-10 w-full overflow-hidden rounded-3xl p-7 fade-up",
@@ -214,7 +214,7 @@ export function Onboarding({
               <button
                 onClick={handleGoogle}
                 disabled={authLoading}
-                className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white px-4 py-3 text-sm font-medium text-black transition-colors hover:bg-white/90 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-foreground/15 bg-foreground px-4 py-3 text-sm font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-60"
               >
                 <GoogleIcon /> Continue with Google
               </button>
@@ -271,7 +271,7 @@ export function Onboarding({
               </button>
 
               <p className="text-center text-[12px] text-muted-foreground">
-                {authMode === "signup" ? "Already have an account?" : "New to Nikos?"}{" "}
+                {authMode === "signup" ? "Already have an account?" : "New to Niko?"}{" "}
                 <button
                   onClick={() => {
                     setAuthMode(authMode === "signup" ? "signin" : "signup");
@@ -293,11 +293,11 @@ export function Onboarding({
                   key={p.id}
                   className={cn(
                     "relative flex flex-col rounded-2xl border p-4",
-                    p.highlight ? "border-[#4F7CFF]/50 bg-[#4F7CFF]/[0.08]" : "border-white/10 bg-white/[0.02]"
+                    p.highlight ? "border-[#4F7CFF]/50 bg-[#4F7CFF]/[0.08]" : "border-foreground/10 bg-foreground/[0.02]"
                   )}
                 >
                   {p.highlight && (
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#4F7CFF] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#4F7CFF] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#fff]">
                       Popular
                     </span>
                   )}
@@ -319,10 +319,10 @@ export function Onboarding({
                     className={cn(
                       "w-full rounded-xl px-3 py-2 text-[13px] font-medium transition-colors",
                       p.id === "free"
-                        ? "border border-white/15 text-foreground hover:bg-white/5"
+                        ? "border border-foreground/15 text-foreground hover:bg-foreground/5"
                         : p.highlight
                         ? "btn-primary"
-                        : "border border-white/15 text-foreground hover:bg-white/5"
+                        : "border border-foreground/15 text-foreground hover:bg-foreground/5"
                     )}
                   >
                     {p.id === "free" ? "Start free" : `Choose ${p.name}`}

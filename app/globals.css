@@ -77,6 +77,90 @@
   --z-base: 0; --z-raised: 10; --z-overlay: 20; --z-panel: 30; --z-modal: 50;
 }
 
+/* ─── Theme palettes ─────────────────────────────────────────────────────── */
+/* Dark is the default (above). `.dark` repeats the dark raws so it can also be
+   *pinned* onto a subtree (e.g. the product mockup) while the page is in light
+   mode. `.light` flips the neutrals: black → white, white → near-black. Brand
+   blue stays constant across both. */
+:root.dark, .dark {
+  color-scheme: dark;
+  --background:          #050507;
+  --foreground:          #F7F8FA;
+  --card:                #0E0E14;
+  --card-foreground:     #F7F8FA;
+  --popover:             #101018;
+  --popover-foreground:  #F7F8FA;
+  --primary:             #4F7CFF;
+  --primary-foreground:  #F7F8FA;
+  --secondary:           #16161F;
+  --secondary-foreground:#F7F8FA;
+  --muted:               #14141C;
+  --muted-foreground:    #9AA3B2;
+  --accent:              #1A1A24;
+  --accent-foreground:   #F7F8FA;
+  --destructive:         #f0556a;
+  --destructive-foreground: #F7F8FA;
+  --border:              rgba(255, 255, 255, 0.09);
+  --input:               rgba(255, 255, 255, 0.12);
+  --ring:                #4F7CFF;
+  --navy:                #050507;
+  --nav-blue:            #4F7CFF;
+  --nav-blue-2:          #6D8EFF;
+}
+
+:root.light, .light {
+  color-scheme: light;
+  --background:          #FFFFFF;   /* paper white          */
+  --foreground:          #0B0B12;   /* near-black ink       */
+  --card:                #FFFFFF;
+  --card-foreground:     #0B0B12;
+  --popover:             #FFFFFF;
+  --popover-foreground:  #0B0B12;
+  --primary:             #4F7CFF;
+  --primary-foreground:  #FFFFFF;
+  --secondary:           #F1F2F6;
+  --secondary-foreground:#0B0B12;
+  --muted:               #EEF0F4;
+  --muted-foreground:    #5A6373;   /* readable grey on white */
+  --accent:              #EDEFF4;
+  --accent-foreground:   #0B0B12;
+  --destructive:         #e23a52;
+  --destructive-foreground: #FFFFFF;
+  --border:              rgba(11, 11, 18, 0.10);
+  --input:               rgba(11, 11, 18, 0.16);
+  --ring:                #4F7CFF;
+  --navy:                #E7EAF2;
+  --nav-blue:            #4F7CFF;
+  --nav-blue-2:          #3B63E6;
+}
+
+/* Glass + scrollbar inversion for light mode (dark variants live below). */
+.light .glass {
+  background: rgba(11, 11, 18, 0.025);
+  border: 1px solid rgba(11, 11, 18, 0.08);
+}
+.light .glass-strong {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(11, 11, 18, 0.08);
+}
+.light .glass-hover:hover {
+  background: rgba(11, 11, 18, 0.04);
+  border-color: rgba(79, 124, 255, 0.35);
+}
+.light .surface {
+  background: linear-gradient(180deg, rgba(11,11,18,0.025), rgba(11,11,18,0) 40%), var(--card);
+  border: 1px solid rgba(11, 11, 18, 0.08);
+}
+.light .gradient-text {
+  background: linear-gradient(180deg, #0B0B12 0%, #3B4BA6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.light .scroll-thin { scrollbar-color: rgba(11,11,18,0.18) transparent; }
+.light .scroll-thin::-webkit-scrollbar-thumb { background: rgba(11,11,18,0.18); }
+.light .scroll-thin::-webkit-scrollbar-thumb:hover { background: rgba(79,124,255,0.4); }
+
 /* ─── Base reset ────────────────────────────────────────────────────────── */
 *,
 *::before,

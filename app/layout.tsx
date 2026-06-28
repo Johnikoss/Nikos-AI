@@ -1,8 +1,13 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Inter, Roboto_Slab } from "next/font/google";
 import { SceneBackground } from "@/components/scene-background";
 import { LogoDefs } from "@/components/logo";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+
+// Applied before paint so there's no theme flash on load. The landing ("/") is a
+// dark-only page, so it's always forced dark regardless of the stored preference.
+const noFlashTheme = `(function(){try{var t=location.pathname==='/'?'dark':(localStorage.getItem('niko-theme')||'dark');var r=document.documentElement;r.classList.add(t);r.style.colorScheme=t;}catch(e){document.documentElement.classList.add('dark');}})();`;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,7 +26,7 @@ const slab = Roboto_Slab({
 });
 
 export const metadata: Metadata = {
-  title: "Nikos AI — Navigate your life",
+  title: "Niko AI — Navigate your life",
   description:
     "Not another chatbot. A cognitive navigation system that turns overload into one clear move — and remembers where you're going.",
 };
@@ -34,12 +39,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${slab.variable}`}>
+    <html lang="en" className={`${inter.variable} ${slab.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
+      </head>
       <body>
-        {/* Global living background — shared by the landing and the chat */}
-        <SceneBackground />
-        <LogoDefs />
-        {children}
+        <ThemeProvider>
+          {/* Global living background — shared by the landing and the chat */}
+          <SceneBackground />
+          <LogoDefs />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,10 +1,12 @@
-/**
- * Navigation modes — the "capability chips" the user can steer Nikos with.
+﻿/**
+ * Navigation modes — the "capability chips" the user can steer Niko with.
  * Each mode reshapes how the assistant responds (see system-prompt.ts).
- * `map` is the differentiator: a structured, saveable artifact ChatGPT doesn't
- * produce by default.
+ *
+ * `auto` is the default: Niko reads the message and self-routes to the right
+ * register (understand / discover / decide / act). The other chips are manual
+ * overrides for when the user already knows what they want from Niko.
  */
-export type ModeId = "navigate" | "decide" | "plan" | "system" | "recover" | "chat";
+export type ModeId = "auto" | "guide" | "decide" | "action" | "recover" | "chat";
 
 export interface Mode {
   id: ModeId;
@@ -15,20 +17,36 @@ export interface Mode {
   gradient: string;
   /** lucide icon name resolved in the UI */
   icon:
+    | "Sparkles"
     | "Compass"
     | "Scale"
-    | "Map"
-    | "Workflow"
+    | "Zap"
     | "LifeBuoy"
     | "MessageCircle";
 }
 
 export const MODES: Mode[] = [
   {
-    id: "navigate",
-    label: "Navigation",
-    blurb: "Untangle what's actually going on.",
+    id: "chat",
+    label: "Chat",
+    blurb: "Just talk. Open conversation, no fixed format.",
+    hint: "Let's just talk…",
+    gradient: "from-slate-400 to-slate-600",
+    icon: "MessageCircle",
+  },
+  {
+    id: "auto",
+    label: "Auto",
+    blurb: "Let Niko read the moment and respond the right way.",
     hint: "What's on your mind right now?",
+    gradient: "from-violet-500 to-indigo-600",
+    icon: "Sparkles",
+  },
+  {
+    id: "guide",
+    label: "Guide",
+    blurb: "Untangle what's going on, or narrow a vague want into focus.",
+    hint: "I want to do something with my life…",
     gradient: "from-blue-500 to-indigo-600",
     icon: "Compass",
   },
@@ -41,20 +59,12 @@ export const MODES: Mode[] = [
     icon: "Scale",
   },
   {
-    id: "plan",
-    label: "Plan",
-    blurb: "Turn a vague goal into a sequence.",
-    hint: "Help me turn this goal into a plan…",
+    id: "action",
+    label: "Action",
+    blurb: "Know what you want? Turn it into the next concrete move.",
+    hint: "Help me turn this into real steps…",
     gradient: "from-sky-500 to-blue-600",
-    icon: "Map",
-  },
-  {
-    id: "system",
-    label: "System",
-    blurb: "Build a repeatable routine so it sticks.",
-    hint: "I keep failing at this — build me a system…",
-    gradient: "from-emerald-500 to-teal-600",
-    icon: "Workflow",
+    icon: "Zap",
   },
   {
     id: "recover",
@@ -63,14 +73,6 @@ export const MODES: Mode[] = [
     hint: "I'm overwhelmed and can't think straight…",
     gradient: "from-amber-500 to-orange-600",
     icon: "LifeBuoy",
-  },
-  {
-    id: "chat",
-    label: "Chat",
-    blurb: "Just talk. Open conversation, no fixed format.",
-    hint: "Let's just talk…",
-    gradient: "from-slate-400 to-slate-600",
-    icon: "MessageCircle",
   },
 ];
 

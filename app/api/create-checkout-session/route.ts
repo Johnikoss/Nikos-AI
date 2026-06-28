@@ -1,4 +1,4 @@
-import Stripe from "stripe";
+﻿import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 
 // The Stripe SDK isn't compatible with the Edge runtime — run on Node.
@@ -7,8 +7,8 @@ export const runtime = "nodejs";
 // The paid plans shown in the pricing modal. Prices are defined here in cents,
 // so you don't have to create Products/Prices in the Stripe dashboard first.
 const PLANS = {
-  plus: { name: "Nikos AI — Plus", amount: 1200 }, // $12 / month
-  pro: { name: "Nikos AI — Pro", amount: 2900 }, // $29 / month
+  plus: { name: "Niko AI — Plus", amount: 1200 }, // $12 / month
+  pro: { name: "Niko AI — Pro", amount: 2900 }, // $29 / month
 } as const;
 
 type PlanId = keyof typeof PLANS;

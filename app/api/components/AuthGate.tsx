@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -31,7 +31,7 @@ export default function AuthGate({
 
   if (loading) {
     return (
-      <div className="flex h-dvh items-center justify-center text-white/60">
+      <div className="flex h-dvh items-center justify-center text-foreground/60">
         Loading session...
       </div>
     );

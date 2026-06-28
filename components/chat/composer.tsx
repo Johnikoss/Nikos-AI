@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,18 +7,18 @@ import {
   Compass,
   Globe,
   LifeBuoy,
-  Map as MapIcon,
   MessageCircle,
   Paperclip,
   Scale,
   SlidersHorizontal,
-  Workflow,
+  Sparkles,
   X,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MODES, ModeId, Mode } from "@/lib/modes";
 
-const MODE_ICONS = { Compass, Scale, Map: MapIcon, Workflow, LifeBuoy, MessageCircle } as const;
+const MODE_ICONS = { Sparkles, Compass, Scale, Zap, LifeBuoy, MessageCircle } as const;
 
 interface ComposerProps {
   value: string;
@@ -174,9 +174,9 @@ export function Composer({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-white/10 bg-black/85 p-1 backdrop-blur-xl"
+            className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-foreground/10 bg-background/85 p-1 backdrop-blur-xl"
           >
-            <p className="px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+            <p className="px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-widest text-foreground/35">
               Tools & modes
             </p>
             {filtered.map((cmd, i) => (
@@ -189,12 +189,12 @@ export function Composer({
                 }}
                 className={cn(
                   "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-colors",
-                  i === activeCmd ? "bg-white/10 text-white" : "text-white/65 hover:bg-white/5"
+                  i === activeCmd ? "bg-foreground/10 text-foreground" : "text-foreground/65 hover:bg-foreground/5"
                 )}
               >
-                <span className="text-white/55">{cmd.icon}</span>
+                <span className="text-foreground/55">{cmd.icon}</span>
                 <span className="flex-1 font-medium">{cmd.label}</span>
-                <span className="text-[11px] text-white/35">{cmd.hint}</span>
+                <span className="text-[11px] text-foreground/35">{cmd.hint}</span>
               </button>
             ))}
           </motion.div>
@@ -203,8 +203,8 @@ export function Composer({
 
       <div
         className={cn(
-          "rounded-2xl border bg-white/[0.03] backdrop-blur-xl transition-colors",
-          focused ? "border-[#4F7CFF]/50" : "border-white/10"
+          "rounded-2xl border bg-foreground/[0.03] backdrop-blur-xl transition-colors",
+          focused ? "border-[#4F7CFF]/50" : "border-foreground/10"
         )}
       >
         {/* attachments */}
@@ -219,13 +219,13 @@ export function Composer({
               {attachments.map((file, i) => (
                 <span
                   key={`${file}-${i}`}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.06] px-2.5 py-1 text-[12px] text-white/70"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-foreground/[0.06] px-2.5 py-1 text-[12px] text-foreground/70"
                 >
                   <Paperclip className="size-3" />
                   <span className="max-w-[160px] truncate">{file}</span>
                   <button
                     onClick={() => setAttachments((p) => p.filter((_, j) => j !== i))}
-                    className="text-white/40 transition-colors hover:text-white"
+                    className="text-foreground/40 transition-colors hover:text-foreground"
                     aria-label={`Remove ${file}`}
                   >
                     <X className="size-3" />
@@ -247,7 +247,7 @@ export function Composer({
           onKeyDown={onKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="block w-full resize-none bg-transparent px-4 pt-3.5 text-sm text-white/90 outline-none placeholder:text-white/30 disabled:opacity-50"
+          className="block w-full resize-none bg-transparent px-4 pt-3.5 text-sm text-foreground/90 outline-none placeholder:text-foreground/30 disabled:opacity-50"
           style={{ maxHeight: 200 }}
         />
 
@@ -270,7 +270,7 @@ export function Composer({
               onClick={() => setShowCommands((v) => !v)}
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] transition-colors",
-                showCommands ? "bg-white/10 text-white" : "text-white/55 hover:bg-white/5 hover:text-white/90"
+                showCommands ? "bg-foreground/10 text-foreground" : "text-foreground/55 hover:bg-foreground/5 hover:text-foreground/90"
               )}
             >
               <SlidersHorizontal className="size-4" />
@@ -311,7 +311,7 @@ function ToolButton({
       aria-label={label}
       className={cn(
         "inline-flex items-center justify-center rounded-lg p-2 transition-colors",
-        active ? "bg-[#4F7CFF]/15 text-[#9DB4FF]" : "text-white/45 hover:bg-white/5 hover:text-white/90"
+        active ? "bg-[#4F7CFF]/15 text-[#9DB4FF]" : "text-foreground/45 hover:bg-foreground/5 hover:text-foreground/90"
       )}
     >
       {children}

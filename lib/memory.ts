@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Lightweight persistent "memory" — the single most-demanded AI feature in 2026.
  * Stored locally for now; swap loadProfile/saveProfile for a DB call later
  * (see the publish plan). The profile is injected into every system prompt so
- * Nikos remembers who the user is and what they're navigating toward.
+ * Niko remembers who the user is and what they're navigating toward.
  */
 const PROFILE_KEY = "nikos-ai:profile";
 
@@ -11,9 +11,9 @@ export interface Profile {
   name: string;
   /** the headline thing they're navigating right now */
   focus: string;
-  /** how they want Nikos to talk to them */
+  /** how they want Niko to talk to them */
   style: "direct" | "gentle" | "challenging";
-  /** durable facts Nikos has learned (manually or pinned from chats) */
+  /** durable facts Niko has learned (manually or pinned from chats) */
   notes: string[];
   /** has the user finished onboarding */
   onboarded: boolean;

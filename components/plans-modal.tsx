@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Check, Loader2, X, Zap } from "lucide-react";
@@ -94,7 +94,7 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" onClick={onClose} aria-hidden />
       <div className="glass-strong relative z-10 max-h-full w-full max-w-3xl overflow-y-auto scroll-thin rounded-3xl p-7 fade-up">
         <button
           onClick={onClose}
@@ -110,7 +110,7 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
           </span>
           <h2 className="mt-3 font-serif text-2xl font-medium sm:text-3xl">Upgrade your navigation</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Free gets you thinking clearly. Paid plans let Nikos remember more and stay one step ahead.
+            Free gets you thinking clearly. Paid plans let Niko remember more and stay one step ahead.
           </p>
         </div>
 
@@ -122,11 +122,11 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
                 "relative flex flex-col rounded-2xl border p-5",
                 p.highlight
                   ? "border-[#4F7CFF]/50 bg-[#4F7CFF]/[0.08]"
-                  : "border-white/10 bg-white/[0.02]"
+                  : "border-foreground/10 bg-foreground/[0.02]"
               )}
             >
               {p.highlight && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#4F7CFF] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#4F7CFF] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#fff]">
                   Most popular
                 </span>
               )}
@@ -152,10 +152,10 @@ export function PlansModal({ onClose }: { onClose: () => void }) {
                 className={cn(
                   "flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors disabled:opacity-60",
                   p.current
-                    ? "cursor-default border border-white/10 text-muted-foreground"
+                    ? "cursor-default border border-foreground/10 text-muted-foreground"
                     : p.highlight
                     ? "btn-primary"
-                    : "border border-white/15 text-foreground hover:bg-white/5"
+                    : "border border-foreground/15 text-foreground hover:bg-foreground/5"
                 )}
               >
                 {loadingPlan === p.id && <Loader2 className="size-4 animate-spin" />}

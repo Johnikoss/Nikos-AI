@@ -1,6 +1,24 @@
 import { Conversation, Message, uid } from "./types";
+import { ModeId, MODES } from "./modes";
 
 const STORAGE_KEY = "nikos-ai:conversations";
+
+/** Old mode ids that no longer exist, mapped onto the current set. */
+const LEGACY_MODE_MAP: Record<string, ModeId> = {
+  navigate: "guide",
+  plan: "action",
+  system: "action",
+};
+const VALID_MODES = new Set<string>(MODES.map((m) => m.id));
+
+/** Coerce any stored/legacy mode value into a valid current ModeId. */
+function normalizeMode(mode: unknown): ModeId {
+  if (typeof mode === "string") {
+    if (VALID_MODES.has(mode)) return mode as ModeId;
+    if (mode in LEGACY_MODE_MAP) return LEGACY_MODE_MAP[mode];
+  }
+  return "auto";
+}
 
 export function loadConversations(): Conversation[] {
   if (typeof window === "undefined") return [];
@@ -10,7 +28,7 @@ export function loadConversations(): Conversation[] {
     const parsed = JSON.parse(raw) as Conversation[];
     if (!Array.isArray(parsed)) return [];
     return parsed
-      .map((c) => ({ ...c, mode: c.mode ?? "navigate" }))
+      .map((c) => ({ ...c, mode: normalizeMode(c.mode) }))
       .sort((a, b) => b.updatedAt - a.updatedAt);
   } catch {
     return [];
@@ -26,7 +44,7 @@ export function saveConversations(conversations: Conversation[]): void {
   }
 }
 
-export function newConversation(mode: Conversation["mode"] = "navigate"): Conversation {
+export function newConversation(mode: Conversation["mode"] = "chat"): Conversation {
   const now = Date.now();
   return {
     id: uid(),

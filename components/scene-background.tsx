@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useTheme } from "@/components/theme-provider";
 
 /**
  * Global background. The landing gets the living scene (color-shifting glow,
@@ -12,6 +13,7 @@ import { usePathname } from "next/navigation";
 export function SceneBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pathname = usePathname();
+  const { theme } = useTheme();
   const isChat = pathname?.startsWith("/app") ?? false;
 
   useEffect(() => {
@@ -22,6 +24,13 @@ export function SceneBackground() {
     if (!context) return;
     const cv = canvasEl;
     const c = context;
+
+    // The landing is a dark-only page (base is hard-coded near-black below), so the
+    // grid/curves are always drawn with their dark-theme colors — independent of the
+    // user's stored app theme.
+    const gridColor = "rgba(255,255,255,0.045)";
+    const neutralCurve = "255,255,255";
+    const neutralAlpha = 0.10;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const GRID = 46; // grid cell size (px)
@@ -35,7 +44,7 @@ export function SceneBackground() {
     const curves = [
       { amp: 70, freq: 0.0055, speed: 0.18, phase: 0, yFrac: 0.32, color: "79,124,255", alpha: 0.30 },
       { amp: 110, freq: 0.0034, speed: -0.12, phase: 1.7, yFrac: 0.55, color: "139,108,255", alpha: 0.22 },
-      { amp: 52, freq: 0.0072, speed: 0.24, phase: 3.4, yFrac: 0.7, color: "255,255,255", alpha: 0.10 },
+      { amp: 52, freq: 0.0072, speed: 0.24, phase: 3.4, yFrac: 0.7, color: neutralCurve, alpha: neutralAlpha },
     ];
 
     function resize() {
@@ -51,7 +60,7 @@ export function SceneBackground() {
 
     function drawGrid() {
       c.lineWidth = 1;
-      c.strokeStyle = "rgba(255,255,255,0.045)";
+      c.strokeStyle = gridColor;
       c.beginPath();
       for (let x = (w / 2) % GRID; x <= w; x += GRID) {
         c.moveTo(Math.round(x) + 0.5, 0);
@@ -137,12 +146,12 @@ export function SceneBackground() {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseout", onLeave);
     };
-  }, [isChat]);
+  }, [isChat, theme]);
 
   if (isChat) {
     return (
       <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[#050507]" />
+        <div className="absolute inset-0 bg-background" />
         <div className="chat-glow" />
       </div>
     );
