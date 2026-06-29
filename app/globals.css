@@ -344,6 +344,58 @@ body {
 .fade-up-3  { animation-delay: .2s; }
 .fade-up-4  { animation-delay: .28s; }
 
+/* ─── Onboarding full-screen ambience ───────────────────────────────────── */
+.onb-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(72px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.onb-orb-1 {
+  width: 46vmax; height: 46vmax;
+  top: -16vmax; left: -10vmax;
+  background: radial-gradient(circle at 30% 30%, rgba(79, 124, 255, 0.55), transparent 70%);
+  animation: onb-float-1 18s ease-in-out infinite;
+}
+.onb-orb-2 {
+  width: 40vmax; height: 40vmax;
+  bottom: -14vmax; right: -8vmax;
+  background: radial-gradient(circle at 60% 40%, rgba(45, 91, 255, 0.45), transparent 70%);
+  animation: onb-float-2 22s ease-in-out infinite;
+}
+@keyframes onb-float-1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(4%, 6%); } }
+@keyframes onb-float-2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-5%, -4%); } }
+
+/* Per-step entrance */
+@keyframes onb-step-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.onb-step { animation: onb-step-in 0.45s cubic-bezier(.2,.7,.2,1) both; }
+.onb-stagger > * { animation: onb-step-in 0.45s cubic-bezier(.2,.7,.2,1) both; }
+.onb-stagger > *:nth-child(1) { animation-delay: .04s; }
+.onb-stagger > *:nth-child(2) { animation-delay: .10s; }
+.onb-stagger > *:nth-child(3) { animation-delay: .16s; }
+.onb-stagger > *:nth-child(4) { animation-delay: .22s; }
+
+/* Option cards */
+.onb-opt { transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease; }
+.onb-opt:hover { transform: translateY(-2px); }
+.onb-opt:active { transform: translateY(0) scale(.99); }
+
+/* Processing overlay */
+@keyframes onb-ring-spin { to { transform: rotate(360deg); } }
+.onb-ring { animation: onb-ring-spin 0.9s linear infinite; }
+@keyframes onb-bar-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.onb-bar { position: relative; overflow: hidden; }
+.onb-bar::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(79, 124, 255, 0.95), transparent);
+  animation: onb-bar-slide 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-orb, .onb-step, .onb-stagger > *, .onb-ring, .onb-bar::after { animation: none; }
+}
+
 /* Typing indicator dots */
 .typing span {
   display: inline-block;

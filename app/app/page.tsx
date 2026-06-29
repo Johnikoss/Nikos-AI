@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { Conversation, Message, uid } from "@/lib/types";
 import { loadConversations, newConversation, renameConversation, saveConversations, titleFrom } from "@/lib/store";
 import { MODES, ModeId, getMode } from "@/lib/modes";
-import { Profile, loadProfile, saveProfile, profileToMemory } from "@/lib/memory";
+import { Profile, EMPTY_PROFILE, loadProfile, saveProfile, profileToMemory } from "@/lib/memory";
 import { Onboarding } from "@/components/onboarding";
 import { PlansModal } from "@/components/plans-modal";
 import { Composer } from "@/components/chat/composer";
@@ -473,7 +473,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [profile, setProfile] = useState<Profile>({ name: "", focus: "", style: "direct", notes: [], onboarded: true, updatedAt: 0 });
+  const [profile, setProfile] = useState<Profile>({ ...EMPTY_PROFILE, onboarded: true });
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPlans, setShowPlans] = useState(false);
   const [mode, setMode] = useState<ModeId>("chat");
