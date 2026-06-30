@@ -164,10 +164,14 @@ export function Onboarding({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* animated ambient background — solid base with soft drifting orbs.
-          (A full-viewport backdrop-blur would be costly and pointless here,
-          since this overlay already covers the entire app.) */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden bg-background">
+      {/* animated ambient background — a fully OPAQUE base (white in light mode,
+          near-black in dark) so the app behind never shows through, with soft
+          drifting orbs on top. We set the colour via the CSS var directly
+          because the `bg-background` utility resolves to transparent here. */}
+      <div
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        style={{ background: "var(--background)" }}
+      >
         <div className="onb-orb onb-orb-1" />
         <div className="onb-orb onb-orb-2" />
       </div>
