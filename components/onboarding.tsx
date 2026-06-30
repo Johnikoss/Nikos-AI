@@ -164,16 +164,14 @@ export function Onboarding({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* animated ambient background — a fully OPAQUE base (white in light mode,
-          near-black in dark) so the app behind never shows through, with soft
-          drifting orbs on top. We set the colour via the CSS var directly
-          because the `bg-background` utility resolves to transparent here. */}
-      <div
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-        style={{ background: "var(--background)" }}
-      >
-        <div className="onb-orb onb-orb-1" />
-        <div className="onb-orb onb-orb-2" />
+      {/* Ambient background — a fully OPAQUE base (white in light mode, near-black
+          in dark) so the app behind never shows through, topped with the app's
+          signature `scene-glow` (the cool color-shifting blue gradient). We set
+          the base colour via the CSS var directly because the `bg-background`
+          utility resolves to transparent here. */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "var(--background)" }} />
+        <div className="scene-glow" />
       </div>
 
       {/* close (only when editing — first-time users use Skip) */}
