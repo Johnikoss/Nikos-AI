@@ -1,38 +1,24 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Niko brand mark — an "N" that reads as a slanted A + I at second glance.
+ * Niko brand mark — the actual logo artwork (public/logo.png).
  *
- * Monochrome construction: the whole mark is drawn as a single bold stroke in
- * `var(--foreground)`, so it always opposes the background — black on light,
- * white on dark — with no gradient.
- *
- * Pass `mono` for contexts that set their own color (inherits currentColor).
+ * `mono` is accepted for call-site compatibility but has no effect: the mark is
+ * a fixed image rather than a tintable SVG.
  */
 export function Logo({
   className,
-  mono = false,
 }: {
   className?: string;
   mono?: boolean;
 }) {
-  const color = mono ? "currentColor" : "var(--foreground)";
   return (
-    <svg
-      viewBox="0 0 64 64"
-      className={cn("shrink-0", className)}
-      role="img"
-      aria-label="Niko"
-    >
-      <g fill="none" stroke={color} strokeWidth="8" strokeLinecap="round">
-        {/* left leg — full height */}
-        <line x1="16" y1="13" x2="16" y2="51" />
-        {/* diagonal — top-left to the low bottom-right tail */}
-        <line x1="16" y1="13" x2="50" y2="51" />
-        {/* right leg — full-height top, stops short so the diagonal tails past it */}
-        <line x1="48" y1="13" x2="48" y2="45" />
-      </g>
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/logo.png"
+      alt="Niko"
+      className={cn("shrink-0 object-contain", className)}
+    />
   );
 }
 

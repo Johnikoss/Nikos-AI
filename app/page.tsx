@@ -88,7 +88,7 @@ function Hero() {
         <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
           <Link
             href="/app"
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-medium text-background shadow-[0_0_40px_-6px_rgba(250,255,255,0.4)] transition-colors hover:bg-white/90"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-medium text-[#0A0A12] shadow-[0_0_40px_-6px_rgba(250,255,255,0.4)] transition-colors hover:bg-white/90"
           >
             Start navigating<ArrowRight className="size-4" />
           </Link>
