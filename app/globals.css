@@ -206,6 +206,13 @@ body {
   pointer-events: none;
   background: radial-gradient(45% 38% at 50% 60%, rgba(79, 124, 255, 0.06), transparent 70%);
 }
+/* Light mode: the white chat canvas gets a soft blue → lavender gradient wash. */
+.light .chat-glow {
+  background:
+    radial-gradient(72% 62% at 8% 100%, rgba(79, 124, 255, 0.20), transparent 62%),
+    radial-gradient(56% 56% at 96% 4%, rgba(139, 108, 255, 0.14), transparent 60%),
+    linear-gradient(135deg, rgba(214, 223, 255, 0.6), rgba(255, 255, 255, 0) 55%);
+}
 .scene-grain {
   position: absolute;
   inset: 0;
