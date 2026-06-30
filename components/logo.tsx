@@ -3,13 +3,11 @@ import { cn } from "@/lib/utils";
 /**
  * Niko brand mark — an "N" that reads as a slanted A + I at second glance.
  *
- * Premium two-tone construction: a thin brand-gradient OUTLINE rim sits under a
- * neutral core drawn in `var(--foreground)`, so the body of the mark always
- * opposes the background — white on dark, black on light — while the gradient
- * reads only as a delicate edge. The gradient ("niko-grad") is defined once
- * globally via <LogoDefs/> in the root layout.
+ * Monochrome construction: the whole mark is drawn as a single bold stroke in
+ * `var(--foreground)`, so it always opposes the background — black on light,
+ * white on dark — with no gradient.
  *
- * Pass `mono` for single-color contexts (everything inherits currentColor).
+ * Pass `mono` for contexts that set their own color (inherits currentColor).
  */
 export function Logo({
   className,
@@ -18,8 +16,7 @@ export function Logo({
   className?: string;
   mono?: boolean;
 }) {
-  const outline = mono ? "currentColor" : "url(#niko-grad)";
-  const body = mono ? "currentColor" : "var(--foreground)";
+  const color = mono ? "currentColor" : "var(--foreground)";
   return (
     <svg
       viewBox="0 0 64 64"
@@ -27,17 +24,15 @@ export function Logo({
       role="img"
       aria-label="Niko"
     >
-      <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-        {/* Gradient rim (slightly wider) … */}
-        <g stroke={outline} strokeWidth="9">
-          <path d="M16 47 L16 18 L38 47" />
-          <path d="M43 47 L43 18" />
-        </g>
-        {/* … neutral core on top, opposing the background. */}
-        <g stroke={body} strokeWidth="4.5">
-          <path d="M16 47 L16 18 L38 47" />
-          <path d="M43 47 L43 18" />
-        </g>
+      <g
+        fill="none"
+        stroke={color}
+        strokeWidth="8.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M16 47 L16 18 L38 47" />
+        <path d="M43 47 L43 18" />
       </g>
     </svg>
   );
