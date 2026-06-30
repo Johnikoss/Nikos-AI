@@ -24,15 +24,13 @@ export function Logo({
       role="img"
       aria-label="Niko"
     >
-      <g
-        fill="none"
-        stroke={color}
-        strokeWidth="8.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M16 47 L16 18 L38 47" />
-        <path d="M43 47 L43 18" />
+      <g fill="none" stroke={color} strokeWidth="8" strokeLinecap="round">
+        {/* left leg — full height */}
+        <line x1="16" y1="13" x2="16" y2="51" />
+        {/* diagonal — top-left to the low bottom-right tail */}
+        <line x1="16" y1="13" x2="50" y2="51" />
+        {/* right leg — full-height top, stops short so the diagonal tails past it */}
+        <line x1="48" y1="13" x2="48" y2="45" />
       </g>
     </svg>
   );
